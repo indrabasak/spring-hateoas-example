@@ -19,10 +19,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,12 +49,12 @@ public class BookController {
     }
 
     @ApiOperation(value = "Creates a book.", response = Book.class)
-    @RequestMapping(method = RequestMethod.POST, value = "/books")
+    @PostMapping(value = "/books")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BookResource> create(@CustomApiParam(
             value = "A book request.",
             example = "{title: \"My Life\", author: \"john doe\"}")
-            @RequestBody BookRequest request) {
+                                               @RequestBody BookRequest request) {
         Book book = service.create(request);
         BookResource resource = bookAssembler.toResource(book);
 
@@ -63,8 +63,8 @@ public class BookController {
 
     @ApiOperation(value = "Retrieves a book.", notes = "Requires book identifier",
             response = Book.class)
-    @RequestMapping(method = RequestMethod.GET, produces = {
-            MediaType.APPLICATION_JSON_VALUE}, value = "/books/{id}")
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE},
+            value = "/books/{id}")
     public ResponseEntity<BookResource> read(@CustomApiParam(
             value = "A book id.",
             example = "{1234") @PathVariable("id") UUID id) {
@@ -75,8 +75,7 @@ public class BookController {
     }
 
     @ApiOperation(value = "Retrieves all books.", response = Book.class)
-    @RequestMapping(method = RequestMethod.GET, produces = {
-            MediaType.APPLICATION_JSON_VALUE}, value = "/books")
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, value = "/books")
     public HttpEntity<PagedResources<Book>> readAll(Pageable pageable,
                                                     PagedResourcesAssembler assembler) {
         Page<Book> books = service.readAll(pageable);
