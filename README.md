@@ -7,11 +7,10 @@
 
 Spring HATEOAS Example
 ==================================
-This is an example of using TLS (Transport Layer Security) with Spring Boot. 
-In this example, TLS is enabled in both server and client. Basic Access 
-Authorization is also enabled on the server side.
+This is a simple example of using HATEOAS with Spring Boot. It contains examples on how to use 
+`PagedResourcesAssembler`, `ResourceAssemblerSupport`, etc. 
 
-### Build
+## Build
 To build the JAR, execute the following command from the parent directory:
 
 ```
@@ -21,7 +20,7 @@ mvn clean install
 This should build the following Spring Boot jar, `spring-hateoas-example-1.0.0.jar`, located in `target`
 folder.
 
-### Run 
+## Run 
 To start the server, run the executable jar from the command:
 
 ```bash
@@ -46,6 +45,83 @@ $ java -jar target/spring-hateoas-example-1.0.0.jar
 This should start the server at port `8080`. From the browser, you can access
 the server swagger UI page at `https://localhost:8080/swagger-ui.html`.
  
+## Usage
+
+### Create a Book
+**Request**
+
+```bash
+curl -X POST "http://localhost:8080/books" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"title\": \"Indra's Book\", \"author\": \"Indra\"}"
+```
+
+**Response**
+
+```json
+{
+  "id": "0a2dbb50-4ff7-48a2-b89f-4ee9d19c90b6",
+  "title": "Indra's Book",
+  "author": "Indra",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/books/0a2dbb50-4ff7-48a2-b89f-4ee9d19c90b6"
+    }
+  }
+}
+```
+
+### Retrieve A Book
+**Request**
+
+```bash
+curl -X GET "http://localhost:8080/books/0a2dbb50-4ff7-48a2-b89f-4ee9d19c90b6" -H "accept: application/json"
+```
+
+**Response**
+```json
+{
+  "id": "0a2dbb50-4ff7-48a2-b89f-4ee9d19c90b6",
+  "title": "Indra's Book",
+  "author": "Indra",
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/books/0a2dbb50-4ff7-48a2-b89f-4ee9d19c90b6"
+    }
+  }
+}
+```
+
+### Retrieve All Books
+**Request**
+
+```bash
+curl -X GET "http://localhost:8080/books?page=0&size=1" -H "accept: application/json"
+```
+
+**Response**
+```json
+{
+  "_embedded": {
+    "bookList": [
+      {
+        "id": "df3372ef-a0a2-4569-982a-78c708d1f609",
+        "title": "indra's book",
+        "author": "indra"
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/books?page=0&size=20"
+    }
+  },
+  "page": {
+    "size": 20,
+    "totalElements": 1,
+    "totalPages": 1,
+    "number": 0
+  }
+}
+```
 
 [travis-badge]: https://travis-ci.org/indrabasak/spring-hateoas-example.svg?branch=master
 [travis-badge-url]: https://travis-ci.org/indrabasak/spring-hateoas-example/
